@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     flex: 1,
+    alignItems: 'center',
   },
   deleteButton: {
     marginLeft: 10,
@@ -71,6 +72,24 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: 20,
     fontSize: 16,
+  },
+  completedTask: {
+    textDecorationLine: 'line-through',
+    color: '#aaa',
+    opacity: 0.7,
+    fontStyle: 'italic',
+  },
+  editInput: {
+    backgroundColor: '#fffbe6',
+    borderColor: '#ffd700',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontSize: 16,
+    flex: 1,
+    textAlignVertical: 'center', // Ensures vertical centering
+    height: 40, // Fixed height for better alignment
   },
 });
 
