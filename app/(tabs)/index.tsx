@@ -32,16 +32,19 @@ export default function ToDoScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
       <Text style={styles.title}>📝 Ma Liste de Tâches</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Ajouter une tâche..."
-        value={input}
-        onChangeText={setInput}
-      />
-
-      <Button title="Ajouter" onPress={addTask} />
-
+      
+      <View style={styles.inputRow}>
+        <TextInput
+          style={styles.input}
+          placeholder="Ajouter une tâche..."
+          value={input}
+          onChangeText={setInput}
+          onSubmitEditing={addTask}
+          returnKeyType="done"
+        />
+        <Button title="Ajouter" onPress={addTask} disabled={input.trim().length === 0} />
+      </View>
+      
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}

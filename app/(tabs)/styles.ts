@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 0,
     marginBottom: 10,
   },
   input: {
@@ -27,7 +28,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 8,
-    marginRight: 8,
+    marginRight: 2,
+    width: '80%',
   },
   addButton: {
     backgroundColor: '#11114E',
