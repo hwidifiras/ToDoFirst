@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import styles from './styles'; // Assuming you have a styles.js file for styling
 type Task = {
   id: number;
   title: string;
@@ -59,39 +59,4 @@ export default function ToDoScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-  flex: 1,
-  paddingHorizontal: 20,
-  paddingTop: 10,
-  backgroundColor: '#fff',
-},
-title: {
-  fontSize: 24,
-  fontWeight: 'bold',
-  marginBottom: 16,
-  color: '#11114E', // your theme color
-},
-input: {
-  borderWidth: 1,
-  borderColor: '#ccc',
-  padding: 10,
-  borderRadius: 8,
-  marginBottom: 10,
-},
-taskItem: {
-  fontSize: 16,
-  color: '#333',
-},
-taskRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 8,
-},
-safeArea: {
-  flex: 1,
-  backgroundColor: '#fff',
-},
 
-});
