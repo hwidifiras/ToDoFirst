@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import styles from './styles'; // Assuming you have a styles.js file for styling
 type Task = {
   id: number;
@@ -42,13 +43,19 @@ export default function ToDoScreen() {
       <Button title="Ajouter" onPress={addTask} />
 
       <FlatList
-  data={tasks}
-  keyExtractor={(item) => item.id.toString()}
-  renderItem={({ item }) => (
-    <View style={styles.taskRow}>
-      <Text style={styles.taskItem}>• {item.title}</Text>
-      <Button title="Supprimer" color="red" onPress={() => deleteTask(item.id)} />
-    </View>
+        data={tasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.taskRow}>
+            <Text style={styles.taskItem}>• {item.title}</Text>
+            <MaterialIcons
+        name="delete"
+        size={24}
+        color="red"
+        style={styles.deleteButton}
+        onPress={() => deleteTask(item.id)}
+      />
+          </View>
   )}
 />
 
