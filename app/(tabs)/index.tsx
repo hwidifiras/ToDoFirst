@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity, Alert, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useEffect, useState } from 'react';
+import { Alert, Button, FlatList, LayoutAnimation, Platform, Text, TextInput, TouchableOpacity, UIManager, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from './styles';
+import TaskRow from './TaskRow';
+import { Task } from './types';
 // Key for AsyncStorage
 const TASKS_STORAGE_KEY = 'TODO_TASKS';
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
-import styles from './styles'; // Assuming you have a styles.js file for styling
-type Task = {
-  id: number;
-  title: string;
-  completed?: boolean;
-};
 
 export default function ToDoScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [input, setInput] = useState('');
+  const [dueDate, setDueDate] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
 
@@ -49,9 +49,11 @@ export default function ToDoScreen() {
       id: Date.now(),
       title: input.trim(),
       completed: false,
+      dueDate: dueDate ? dueDate : undefined,
     };
     setTasks([newTask, ...tasks]);
     setInput('');
+    setDueDate('');
   };
   const toggleCompleted = (id: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -104,7 +106,7 @@ export default function ToDoScreen() {
       
       <View style={styles.inputRow}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { flex: 1, minWidth: 0, marginRight: 6 }]}
           placeholder="Ajouter une tâche..."
           value={input}
           onChangeText={setInput}
@@ -113,6 +115,30 @@ export default function ToDoScreen() {
         />
         <Button title="Ajouter" onPress={addTask} disabled={input.trim().length === 0} />
       </View>
+      <View style={styles.dateInputRow}>
+        <TouchableOpacity
+          style={styles.dateInput}
+          onPress={() => setShowDatePicker(true)}
+        >
+          <Text style={{ color: dueDate ? '#333' : '#aaa', fontSize: 14 }} numberOfLines={1}>
+            {dueDate ? `📅 ${dueDate}` : 'Date d\'échéance...'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {showDatePicker && (
+        <DateTimePicker
+          value={dueDate ? new Date(dueDate) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              const iso = selectedDate.toISOString().slice(0, 10);
+              setDueDate(iso);
+            }
+          }}
+        />
+      )}
       {tasks.length === 0 ? (
         <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', marginBottom: 40 }}>
           <MaterialIcons name="inbox" size={64} color="#ccc" style={{ marginBottom: 16 }} />
@@ -125,42 +151,16 @@ export default function ToDoScreen() {
           data={tasks}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.taskRow}>
-              {editingId === item.id ? (
-                <TextInput
-                  style={[styles.taskItem, styles.editInput]}
-                  value={editText}
-                  onChangeText={setEditText}
-                  autoFocus
-                  onSubmitEditing={() => saveEdit(item.id)}
-                  onBlur={() => saveEdit(item.id)}
-                  returnKeyType="done"
-                />
-              ) : (
-                <TouchableOpacity
-                  style={{ flex: 1 }}
-                  onLongPress={() => startEditing(item.id, item.title)}
-                >
-                  <Text style={[styles.taskItem, item.completed && styles.completedTask]}>
-                    {item.title}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              <MaterialIcons
-                name={item.completed ? "check-circle" : "radio-button-unchecked"}
-                size={24}
-                color={item.completed ? "#4caf50" : "#ccc"}
-                style={{ marginRight: 10 }}
-                onPress={() => toggleCompleted(item.id)}
-              />
-              <MaterialIcons
-                name="delete"
-                size={24}
-                color="red"
-                style={styles.deleteButton}
-                onPress={() => deleteTask(item.id)}
-              />
-            </View>
+            <TaskRow
+              item={item}
+              editingId={editingId}
+              editText={editText}
+              setEditText={setEditText}
+              startEditing={startEditing}
+              saveEdit={saveEdit}
+              toggleCompleted={toggleCompleted}
+              deleteTask={deleteTask}
+            />
           )}
         />
       )}

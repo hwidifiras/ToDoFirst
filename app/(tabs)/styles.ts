@@ -1,6 +1,23 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  dateInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  dateInput: {
+    height: 40,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    minWidth: 120,
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
@@ -20,7 +37,6 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 0,
     marginBottom: 10,
   },
   input: {
@@ -28,8 +44,9 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 8,
-    marginRight: 2,
-    width: '80%',
+    minWidth: 0,
+    flexShrink: 1,
+    backgroundColor: '#fff',
   },
   addButton: {
     backgroundColor: '#11114E',
