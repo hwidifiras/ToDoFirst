@@ -18,6 +18,7 @@ export default function ToDoScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [input, setInput] = useState('');
   const [dueDate, setDueDate] = useState<string>('');
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
@@ -50,10 +51,12 @@ export default function ToDoScreen() {
       title: input.trim(),
       completed: false,
       dueDate: dueDate ? dueDate : undefined,
+      priority,
     };
     setTasks([newTask, ...tasks]);
     setInput('');
     setDueDate('');
+    setPriority('medium');
   };
   const toggleCompleted = (id: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -114,6 +117,56 @@ export default function ToDoScreen() {
           returnKeyType="done"
         />
         <Button title="Ajouter" onPress={addTask} disabled={input.trim().length === 0} />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        <Text style={{ marginRight: 8, fontWeight: 'bold', color: '#333' }}>Priorité:</Text>
+        <TouchableOpacity
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 6,
+            backgroundColor: priority === 'low' ? '#e0f7fa' : '#f5f5f5',
+            marginRight: 4,
+            borderWidth: 1,
+            borderColor: priority === 'low' ? '#00bcd4' : '#ccc',
+            minWidth: 60,
+            alignItems: 'center',
+          }}
+          onPress={() => setPriority('low')}
+        >
+          <Text style={{ color: '#00bcd4', fontWeight: priority === 'low' ? 'bold' : 'normal' }}>Low</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 6,
+            backgroundColor: priority === 'medium' ? '#fffde7' : '#f5f5f5',
+            marginRight: 4,
+            borderWidth: 1,
+            borderColor: priority === 'medium' ? '#ffc107' : '#ccc',
+            minWidth: 60,
+            alignItems: 'center',
+          }}
+          onPress={() => setPriority('medium')}
+        >
+          <Text style={{ color: '#ffc107', fontWeight: priority === 'medium' ? 'bold' : 'normal' }}>Medium</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 6,
+            backgroundColor: priority === 'high' ? '#ffebee' : '#f5f5f5',
+            borderWidth: 1,
+            borderColor: priority === 'high' ? '#f44336' : '#ccc',
+            minWidth: 60,
+            alignItems: 'center',
+          }}
+          onPress={() => setPriority('high')}
+        >
+          <Text style={{ color: '#f44336', fontWeight: priority === 'high' ? 'bold' : 'normal' }}>High</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.dateInputRow}>
         <TouchableOpacity

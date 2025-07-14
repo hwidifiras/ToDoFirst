@@ -62,9 +62,37 @@ const TaskRow: React.FC<TaskRowProps> = ({
         onPress={() => deleteTask(item.id)}
       />
     </View>
-    {item.dueDate && (
-      <View style={{ marginLeft: 16, marginTop: -6, marginBottom: 6 }}>
-        <Text style={{ fontSize: 12, color: '#888' }}>📅 {item.dueDate}</Text>
+    {(item.dueDate || item.priority) && (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, marginTop: -6, marginBottom: 6, gap: 12 }}>
+        {item.dueDate && (
+          <Text style={{ fontSize: 12, color: '#888' }}>📅 {item.dueDate}</Text>
+        )}
+        {item.priority && (
+          <Text
+            style={{
+              fontSize: 12,
+              color:
+                item.priority === 'high'
+                  ? '#f44336'
+                  : item.priority === 'medium'
+                  ? '#ffc107'
+                  : '#00bcd4',
+              fontWeight: 'bold',
+              backgroundColor:
+                item.priority === 'high'
+                  ? '#ffebee'
+                  : item.priority === 'medium'
+                  ? '#fffde7'
+                  : '#e0f7fa',
+              paddingHorizontal: 8,
+              paddingVertical: 2,
+              borderRadius: 6,
+              overflow: 'hidden',
+            }}
+          >
+            {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)} Priority
+          </Text>
+        )}
       </View>
     )}
   </>
