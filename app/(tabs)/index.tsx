@@ -19,6 +19,8 @@ export default function ToDoScreen() {
   const [input, setInput] = useState('');
   const [dueDate, setDueDate] = useState<string>('');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [categoriesInput, setCategoriesInput] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
@@ -46,18 +48,67 @@ export default function ToDoScreen() {
   const addTask = () => {
     if (input.trim().length === 0) return;
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // Include the tag in the input if present
+    let finalCategories = categories;
+    const tag = categoriesInput.trim();
+    if (tag && !categories.includes(tag)) {
+      finalCategories = [...categories, tag];
+    }
     const newTask: Task = {
       id: Date.now(),
       title: input.trim(),
       completed: false,
       dueDate: dueDate ? dueDate : undefined,
       priority,
+      categories: finalCategories,
     };
     setTasks([newTask, ...tasks]);
     setInput('');
     setDueDate('');
     setPriority('medium');
+    setCategoriesInput('');
+    setCategories([]);
   };
+      {/* Tag input row */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        <TextInput
+          style={[styles.input, { flex: 1, minWidth: 0, marginRight: 6 }]}
+          placeholder="Ajouter un tag et appuyer sur Entrée..."
+          value={categoriesInput}
+          onChangeText={setCategoriesInput}
+          onSubmitEditing={() => {
+            const tag = categoriesInput.trim();
+            if (tag && !categories.includes(tag)) {
+              setCategories([...categories, tag]);
+            }
+            setCategoriesInput('');
+          }}
+          returnKeyType="done"
+        />
+        {categories.length > 0 && (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+            {categories.map((cat, idx) => (
+              <TouchableOpacity
+                key={cat}
+                style={{
+                  backgroundColor: '#e3f2fd',
+                  borderRadius: 12,
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  marginRight: 4,
+                  marginBottom: 2,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+                onPress={() => setCategories(categories.filter((c) => c !== cat))}
+              >
+                <Text style={{ color: '#1976d2', fontSize: 13 }}>{cat}</Text>
+                <Text style={{ color: '#1976d2', marginLeft: 2, fontWeight: 'bold' }}>×</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
   const toggleCompleted = (id: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setTasks(tasks =>
@@ -118,6 +169,35 @@ export default function ToDoScreen() {
         />
         <Button title="Ajouter" onPress={addTask} disabled={input.trim().length === 0} />
       </View>
+
+      {/* Tag input row, visually separated and with standard height and margin */}
+      <View style={{ marginBottom: 18 }}>
+        <Text style={{ marginBottom: 4, fontWeight: 'bold', color: '#333' }}>Tags&nbsp;:</Text>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              width: '100%',
+              height: 48,
+              paddingVertical: 12,
+              marginBottom: 0,
+              marginTop: 0,
+            },
+          ]}
+          placeholder="Ajouter un tag et appuyer sur Entrée..."
+          value={categoriesInput}
+          onChangeText={setCategoriesInput}
+          onSubmitEditing={() => {
+            const tag = categoriesInput.trim();
+            if (tag && !categories.includes(tag)) {
+              setCategories([...categories, tag]);
+            }
+            setCategoriesInput('');
+          }}
+          returnKeyType="done"
+        />
+      </View>
+
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
         <Text style={{ marginRight: 8, fontWeight: 'bold', color: '#333' }}>Priorité:</Text>
         <TouchableOpacity

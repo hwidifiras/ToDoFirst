@@ -15,6 +15,7 @@ export interface TaskRowProps {
   deleteTask: (id: number) => void;
 }
 
+
 const TaskRow: React.FC<TaskRowProps> = ({
   item,
   editingId,
@@ -24,78 +25,62 @@ const TaskRow: React.FC<TaskRowProps> = ({
   saveEdit,
   toggleCompleted,
   deleteTask,
-}) => (
-  <>
-    <View style={styles.taskRow}>
-      {editingId === item.id ? (
-        <TextInput
-          style={[styles.taskItem, styles.editInput]}
-          value={editText}
-          onChangeText={setEditText}
-          autoFocus
-          onSubmitEditing={() => saveEdit(item.id)}
-          onBlur={() => saveEdit(item.id)}
-          returnKeyType="done"
-        />
-      ) : (
-        <TouchableOpacity
-          style={{ flex: 1 }}
-          onLongPress={() => startEditing(item.id, item.title)}
-        >
-          <Text style={[styles.taskItem, item.completed && styles.completedTask]}>
-            {item.title}
-          </Text>
-        </TouchableOpacity>
-      )}
-      <MaterialIcons
-        name={item.completed ? 'check-circle' : 'radio-button-unchecked'}
-        size={24}
-        color={item.completed ? '#4caf50' : '#ccc'}
-        style={{ marginRight: 10 }}
-        onPress={() => toggleCompleted(item.id)}
-      />
-      <MaterialIcons
-        name="delete"
-        size={24}
-        color="red"
-        style={styles.deleteButton}
-        onPress={() => deleteTask(item.id)}
-      />
-    </View>
-    {(item.dueDate || item.priority) && (
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, marginTop: -6, marginBottom: 6, gap: 12 }}>
-        {item.dueDate && (
-          <Text style={{ fontSize: 12, color: '#888' }}>📅 {item.dueDate}</Text>
+}) => {
+  return (
+    <View style={[styles.row, item.completed && styles.completedRow]}>
+      <TouchableOpacity onPress={() => toggleCompleted(item.id)} style={styles.circle}>
+        {item.completed && <MaterialIcons name="check" size={18} color="#fff" />}
+      </TouchableOpacity>
+      <View style={{ flex: 1 }}>
+        {editingId === item.id ? (
+          <TextInput
+            value={editText}
+            onChangeText={setEditText}
+            onSubmitEditing={() => saveEdit(item.id)}
+            style={styles.editInput}
+            autoFocus
+          />
+        ) : (
+          <Text style={[styles.title, item.completed && styles.completedText]}>{item.title}</Text>
         )}
-        {item.priority && (
-          <Text
-            style={{
-              fontSize: 12,
-              color:
+        {/* Priority, due date, and tag chips */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, flexWrap: 'wrap' }}>
+          {item.dueDate && (
+            <View style={styles.dueDateChip}>
+              <Text style={styles.dueDateText}>📅 {item.dueDate}</Text>
+            </View>
+          )}
+          {item.priority && (
+            <View style={
+              item.priority === 'high'
+                ? styles.highPriorityChip
+                : item.priority === 'medium'
+                ? styles.mediumPriorityChip
+                : styles.lowPriorityChip
+            }>
+              <Text style={
                 item.priority === 'high'
-                  ? '#f44336'
+                  ? styles.highPriorityText
                   : item.priority === 'medium'
-                  ? '#ffc107'
-                  : '#00bcd4',
-              fontWeight: 'bold',
-              backgroundColor:
-                item.priority === 'high'
-                  ? '#ffebee'
-                  : item.priority === 'medium'
-                  ? '#fffde7'
-                  : '#e0f7fa',
-              paddingHorizontal: 8,
-              paddingVertical: 2,
-              borderRadius: 6,
-              overflow: 'hidden',
-            }}
-          >
-            {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)} Priority
-          </Text>
-        )}
+                  ? styles.mediumPriorityText
+                  : styles.lowPriorityText
+              }>
+                {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)} Priority
+              </Text>
+            </View>
+          )}
+          {item.categories && item.categories.length > 0 && item.categories.map((cat) => (
+            <View key={cat} style={styles.tagChip}>
+              <Text style={{ color: '#1976d2', fontSize: 13 }}>#{cat}</Text>
+            </View>
+          ))}
+        </View>
       </View>
-    )}
-  </>
-);
+      <TouchableOpacity onPress={() => deleteTask(item.id)} style={styles.deleteButton}>
+        <MaterialIcons name="delete" size={24} color="#f44336" />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default TaskRow;
